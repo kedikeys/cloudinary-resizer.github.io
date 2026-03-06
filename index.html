@@ -1,201 +1,286 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-<meta charset="UTF-8">
-<title>Cloudinary Image Resizer</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloudinary Image Resizer</title>
 
-<style>
+  <style>
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+      background:#f5f7fb;
+      margin:0;
+      padding:40px 20px;
+      color:#1f2937;
+    }
 
-body{
-  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;
-  background:#f5f7fb;
-  margin:0;
-  padding:40px 20px;
-}
+    .container{
+      max-width:700px;
+      margin:auto;
+      background:#fff;
+      padding:32px;
+      border-radius:16px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.08);
+    }
 
-.container{
-  max-width:700px;
-  margin:auto;
-  background:white;
-  padding:30px;
-  border-radius:12px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.08);
-}
+    h1{
+      margin:0 0 8px;
+      font-size:28px;
+    }
 
-h1{
-  margin-top:0;
-}
+    .subtitle{
+      color:#6b7280;
+      margin-bottom:24px;
+      line-height:1.5;
+    }
 
-.subtitle{
-  color:#666;
-  margin-bottom:25px;
-}
+    label{
+      display:block;
+      margin:16px 0 8px;
+      font-weight:600;
+      font-size:14px;
+    }
 
-input,select{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  font-size:15px;
-  border:1px solid #ddd;
-  border-radius:8px;
-  box-sizing:border-box;
-}
+    input,
+    select{
+      width:100%;
+      padding:12px 14px;
+      font-size:15px;
+      border:1px solid #d1d5db;
+      border-radius:10px;
+      box-sizing:border-box;
+      background:#fff;
+      transition:border-color .2s, box-shadow .2s;
+    }
 
-input:focus,select:focus{
-  outline:none;
-  border-color:#4c7cff;
-}
+    input:focus,
+    select:focus{
+      outline:none;
+      border-color:#4c7cff;
+      box-shadow:0 0 0 3px rgba(76,124,255,0.12);
+    }
 
-.buttons{
-  display:flex;
-  gap:10px;
-  margin-top:15px;
-}
+    .buttons{
+      display:flex;
+      gap:12px;
+      margin-top:20px;
+      flex-wrap:wrap;
+    }
 
-button{
-  flex:1;
-  padding:12px;
-  font-size:15px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-  transition:0.2s;
-}
+    button{
+      flex:1;
+      min-width:140px;
+      padding:12px 16px;
+      font-size:15px;
+      font-weight:600;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      transition:transform .05s ease, opacity .2s ease, background .2s ease;
+    }
 
-.generate{
-  background:#4c7cff;
-  color:white;
-}
+    button:active{
+      transform:translateY(1px);
+    }
 
-.generate:hover{
-  background:#3b63d8;
-}
+    .generate{
+      background:#4c7cff;
+      color:#fff;
+    }
 
-.clear{
-  background:#eee;
-}
+    .generate:hover{
+      background:#3f6cf0;
+    }
 
-.clear:hover{
-  background:#ddd;
-}
+    .clear{
+      background:#e5e7eb;
+      color:#111827;
+    }
 
-.copy{
-  width:100%;
-  margin-top:15px;
-  background:#28a745;
-  color:white;
-}
+    .clear:hover{
+      background:#dbe0e6;
+    }
 
-.copy:hover{
-  background:#1f8a39;
-}
+    .copy{
+      width:100%;
+      margin-top:16px;
+      background:#16a34a;
+      color:#fff;
+    }
 
-#result{
-  margin-top:20px;
-  background:#f3f4f6;
-  padding:15px;
-  border-radius:8px;
-  font-family:monospace;
-  word-break:break-all;
-  min-height:24px;
-}
+    .copy:hover{
+      background:#15803d;
+    }
 
-footer{
-  text-align:center;
-  margin-top:20px;
-  font-size:13px;
-  color:#888;
-}
+    #result{
+      margin-top:20px;
+      background:#f3f4f6;
+      padding:16px;
+      border-radius:10px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      word-break:break-all;
+      min-height:24px;
+      border:1px solid #e5e7eb;
+    }
 
-</style>
+    footer{
+      text-align:center;
+      margin-top:20px;
+      font-size:13px;
+      color:#9ca3af;
+    }
+
+    .toast{
+      position:fixed;
+      bottom:30px;
+      left:50%;
+      transform:translateX(-50%);
+      background:#111827;
+      color:#fff;
+      padding:12px 20px;
+      border-radius:10px;
+      font-size:14px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .3s ease, transform .3s ease;
+      box-shadow:0 8px 24px rgba(0,0,0,0.18);
+    }
+
+    .toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(0);
+    }
+
+    @media (max-width:600px){
+      .container{
+        padding:22px;
+      }
+
+      .buttons{
+        flex-direction:column;
+      }
+
+      button{
+        width:100%;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="container">
+  <div class="container">
+    <h1>Cloudinary URL Resizer</h1>
+    <div class="subtitle">
+      Lim inn en Cloudinary-bildelenke og generer en ny lenke med ønsket bredde.
+    </div>
 
-<h1>Cloudinary URL Resizer</h1>
-<div class="subtitle">Lim inn en Cloudinary-bildelenke og generer en mindre versjon.</div>
+    <label for="url">Original URL</label>
+    <input id="url" placeholder="Lim inn original Cloudinary URL">
 
-<input id="url" placeholder="Lim inn original Cloudinary URL">
+    <label for="size">Velg størrelse</label>
+    <select id="size">
+      <option value="200">200 px</option>
+      <option value="300">300 px</option>
+      <option value="400">400 px</option>
+      <option value="500">500 px</option>
+      <option value="600">600 px</option>
+      <option value="700">700 px</option>
+      <option value="800" selected>800 px</option>
+      <option value="900">900 px</option>
+      <option value="1000">1000 px</option>
+      <option value="1200">1200 px</option>
+      <option value="1400">1400 px</option>
+      <option value="1600">1600 px</option>
+      <option value="1800">1800 px</option>
+      <option value="2000">2000 px</option>
+    </select>
 
-<select id="size">
-<option value="200">200 px</option>
-<option value="400">400 px</option>
-<option value="600">600 px</option>
-<option value="800" selected>800 px</option>
-<option value="1000">1000 px</option>
-<option value="1200">1200 px</option>
-<option value="1400">1400 px</option>
-<option value="1600">1600 px</option>
-<option value="2000">2000 px</option>
-</select>
+    <label for="customSize">Eller skriv inn egen størrelse</label>
+    <input id="customSize" type="number" min="1" placeholder="F.eks. 750">
 
-<input id="customSize" type="number" placeholder="Eller skriv egen størrelse (px)">
+    <div class="buttons">
+      <button class="generate" onclick="resize()">Lag ny link</button>
+      <button class="clear" onclick="clearFields()">Tøm</button>
+    </div>
 
-<div class="buttons">
-<button class="generate" onclick="resize()">Lag ny link</button>
-<button class="clear" onclick="clearFields()">Tøm</button>
-</div>
+    <div id="result"></div>
 
-<div id="result"></div>
+    <button class="copy" onclick="copy()">Kopier link</button>
 
-<button class="copy" onclick="copy()">Kopier link</button>
+    <footer>Cloudinary helper tool</footer>
+  </div>
 
-<footer>
-Cloudinary helper tool
-</footer>
+  <div id="toast" class="toast">Link kopiert</div>
 
-</div>
+  <script>
+    let toastTimeout;
 
-<script>
+    function resize() {
+      let url = document.getElementById("url").value.trim();
+      let dropdownSize = document.getElementById("size").value;
+      let customSize = document.getElementById("customSize").value.trim();
 
-function resize(){
+      let size = customSize ? customSize : dropdownSize;
 
-let url = document.getElementById("url").value;
-let dropdownSize = document.getElementById("size").value;
-let customSize = document.getElementById("customSize").value;
+      if (!url) {
+        showToast("Lim inn en URL først");
+        return;
+      }
 
-let size = customSize ? customSize : dropdownSize;
+      if (!size || Number(size) <= 0) {
+        showToast("Velg en gyldig størrelse");
+        return;
+      }
 
-if(!url){
-alert("Lim inn en URL");
-return;
-}
+      url = url.replace(/w_\d+,?/g, "");
+      url = url.replace(/h_\d+,?/g, "");
+      url = url.replace(/,{2,}/g, ",");
+      url = url.replace(/\/upload\/,/, "/upload/");
 
-url = url.replace(/w_\d+,?/g,'');
-url = url.replace(/h_\d+,?/g,'');
+      let newUrl = url.replace(
+        "/upload/",
+        "/upload/c_limit,f_auto,q_auto,w_" + size + "/"
+      );
 
-let newUrl = url.replace("/upload/","/upload/c_limit,f_auto,q_auto,w_"+size+"/");
+      document.getElementById("result").textContent = newUrl;
+    }
 
-document.getElementById("result").textContent = newUrl;
+    function copy() {
+      let text = document.getElementById("result").textContent;
 
-}
+      if (!text) {
+        showToast("Ingen link å kopiere");
+        return;
+      }
 
-function copy(){
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          showToast("Link kopiert");
+        })
+        .catch(() => {
+          showToast("Kunne ikke kopiere");
+        });
+    }
 
-let text = document.getElementById("result").textContent;
+    function clearFields() {
+      document.getElementById("url").value = "";
+      document.getElementById("customSize").value = "";
+      document.getElementById("result").textContent = "";
+      document.getElementById("url").focus();
+      showToast("Feltene er tømt");
+    }
 
-if(!text){
-alert("Ingen link å kopiere");
-return;
-}
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
 
-navigator.clipboard.writeText(text);
-alert("Link kopiert");
-
-}
-
-function clearFields(){
-
-document.getElementById("url").value="";
-document.getElementById("customSize").value="";
-document.getElementById("result").textContent="";
-document.getElementById("url").focus();
-
-}
-
-</script>
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1500);
+    }
+  </script>
 
 </body>
 </html>
