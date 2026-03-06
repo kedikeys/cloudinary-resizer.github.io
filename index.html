@@ -7,32 +7,104 @@
 <style>
 
 body{
-  font-family: Arial;
-  max-width:700px;
-  margin:40px auto;
+  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;
+  background:#f5f7fb;
+  margin:0;
+  padding:40px 20px;
 }
 
-input,select,button{
+.container{
+  max-width:700px;
+  margin:auto;
+  background:white;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
+h1{
+  margin-top:0;
+}
+
+.subtitle{
+  color:#666;
+  margin-bottom:25px;
+}
+
+input,select{
   width:100%;
-  padding:10px;
+  padding:12px;
   margin-top:10px;
-  font-size:16px;
+  font-size:15px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  box-sizing:border-box;
+}
+
+input:focus,select:focus{
+  outline:none;
+  border-color:#4c7cff;
 }
 
 .buttons{
   display:flex;
   gap:10px;
+  margin-top:15px;
 }
 
-.buttons button{
+button{
   flex:1;
+  padding:12px;
+  font-size:15px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.generate{
+  background:#4c7cff;
+  color:white;
+}
+
+.generate:hover{
+  background:#3b63d8;
+}
+
+.clear{
+  background:#eee;
+}
+
+.clear:hover{
+  background:#ddd;
+}
+
+.copy{
+  width:100%;
+  margin-top:15px;
+  background:#28a745;
+  color:white;
+}
+
+.copy:hover{
+  background:#1f8a39;
 }
 
 #result{
   margin-top:20px;
-  word-break:break-all;
-  background:#f3f3f3;
+  background:#f3f4f6;
   padding:15px;
+  border-radius:8px;
+  font-family:monospace;
+  word-break:break-all;
+  min-height:24px;
+}
+
+footer{
+  text-align:center;
+  margin-top:20px;
+  font-size:13px;
+  color:#888;
 }
 
 </style>
@@ -40,32 +112,51 @@ input,select,button{
 
 <body>
 
-<h2>Cloudinary URL Resizer</h2>
+<div class="container">
+
+<h1>Cloudinary URL Resizer</h1>
+<div class="subtitle">Lim inn en Cloudinary-bildelenke og generer en mindre versjon.</div>
 
 <input id="url" placeholder="Lim inn original Cloudinary URL">
 
 <select id="size">
+<option value="200">200 px</option>
 <option value="400">400 px</option>
+<option value="600">600 px</option>
 <option value="800" selected>800 px</option>
+<option value="1000">1000 px</option>
 <option value="1200">1200 px</option>
+<option value="1400">1400 px</option>
 <option value="1600">1600 px</option>
+<option value="2000">2000 px</option>
 </select>
 
+<input id="customSize" type="number" placeholder="Eller skriv egen størrelse (px)">
+
 <div class="buttons">
-<button onclick="resize()">Lag ny link</button>
-<button onclick="clearFields()">Tøm</button>
+<button class="generate" onclick="resize()">Lag ny link</button>
+<button class="clear" onclick="clearFields()">Tøm</button>
 </div>
 
 <div id="result"></div>
 
-<button onclick="copy()">Kopier link</button>
+<button class="copy" onclick="copy()">Kopier link</button>
+
+<footer>
+Cloudinary helper tool
+</footer>
+
+</div>
 
 <script>
 
 function resize(){
 
 let url = document.getElementById("url").value;
-let size = document.getElementById("size").value;
+let dropdownSize = document.getElementById("size").value;
+let customSize = document.getElementById("customSize").value;
+
+let size = customSize ? customSize : dropdownSize;
 
 if(!url){
 alert("Lim inn en URL");
@@ -91,15 +182,15 @@ return;
 }
 
 navigator.clipboard.writeText(text);
-
 alert("Link kopiert");
 
 }
 
 function clearFields(){
 
-document.getElementById("url").value = "";
-document.getElementById("result").textContent = "";
+document.getElementById("url").value="";
+document.getElementById("customSize").value="";
+document.getElementById("result").textContent="";
 document.getElementById("url").focus();
 
 }
