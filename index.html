@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<title>Cloudinary Image Resizer</title>
+
+<style>
+
+body{
+  font-family: Arial;
+  max-width:700px;
+  margin:40px auto;
+}
+
+input,select,button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  font-size:16px;
+}
+
+.buttons{
+  display:flex;
+  gap:10px;
+}
+
+.buttons button{
+  flex:1;
+}
+
+#result{
+  margin-top:20px;
+  word-break:break-all;
+  background:#f3f3f3;
+  padding:15px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>Cloudinary URL Resizer</h2>
+
+<input id="url" placeholder="Lim inn original Cloudinary URL">
+
+<select id="size">
+<option value="400">400 px</option>
+<option value="800" selected>800 px</option>
+<option value="1200">1200 px</option>
+<option value="1600">1600 px</option>
+</select>
+
+<div class="buttons">
+<button onclick="resize()">Lag ny link</button>
+<button onclick="clearFields()">Tøm</button>
+</div>
+
+<div id="result"></div>
+
+<button onclick="copy()">Kopier link</button>
+
+<script>
+
+function resize(){
+
+let url = document.getElementById("url").value;
+let size = document.getElementById("size").value;
+
+if(!url){
+alert("Lim inn en URL");
+return;
+}
+
+url = url.replace(/w_\d+,?/g,'');
+url = url.replace(/h_\d+,?/g,'');
+
+let newUrl = url.replace("/upload/","/upload/c_limit,f_auto,q_auto,w_"+size+"/");
+
+document.getElementById("result").textContent = newUrl;
+
+}
+
+function copy(){
+
+let text = document.getElementById("result").textContent;
+
+if(!text){
+alert("Ingen link å kopiere");
+return;
+}
+
+navigator.clipboard.writeText(text);
+
+alert("Link kopiert");
+
+}
+
+function clearFields(){
+
+document.getElementById("url").value = "";
+document.getElementById("result").textContent = "";
+document.getElementById("url").focus();
+
+}
+
+</script>
+
+</body>
+</html>
